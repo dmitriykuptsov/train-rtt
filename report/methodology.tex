@@ -18,8 +18,10 @@ do
 done
 \end{Verbatim}
 
-We have collected a long trace for the entire journey from Helsinki to Tampere, interpolated 
-the date using the X method and plotted the results on the map. The source code of the stuff
-is here~\cite{git}.
+We have collected a long trace for the entire journey from Helsinki to Tampere. We then interpolated 
+the data using the linear interpolator and plotted the results on the map. 
+Since the delay between consequtive measurements was 4 seconds we have have interpolated the date using
+the following formula: $t \in \{0.1, 0.2, \ldots 1\} x_t = A + (B - A) * t$
+The source code of the stuff is here~\cite{git}. 
 
 
