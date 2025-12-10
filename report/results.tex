@@ -1,4 +1,18 @@
+
 \section{Data processing and basic results}
 \label{section:results}
 
+For the demonstration, we have collected a rather small
+trace (30-40 minutes long) for the part of the journey from
+Tampere to Rovaniemi. At first, we combined two
+measurements using the closest timestamps and created a single log file
+(since the GPS and RTT values were stored in two different
+files). We then used the plotly library to show the RTT values
+on Open Street Map. The results of our effort are shown in 
+Figure~\ref{fig:results}. The source code of the stuff is here~\cite{git}. 
 
+\begin{figure}
+    \includegraphics[width=0.4\textwidth]{graphics/rtt.pdf}
+    \caption{Trace of the RTT values}
+    \label{fig:results}
+\end{figure}

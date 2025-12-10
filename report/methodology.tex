@@ -1,12 +1,16 @@
 \section{Data collection methodology}
 \label{section:experiments}
 
-We have used iPhone GPS2IP application to pick up the GPS coordinates from the internal GPS receiver
-to get the current position (latitude and longitude) in GPRMC format. The application was sending the coordinates
-to MacBook laptop over UDP socket. The Python script was registering the coordinates and the timestamps and was logging the 
-data into file. At the same time the script was computing average RTT (in milliseconds) by invoking external bash script.
+We have used the iPhone GPS2IP application to pick up the
+GPS coordinates from the internal GPS receiver to get the
+current position (latitude and longitude) in GPRMC format.
+The application was sending the coordinates to the MacBook
+laptop over a UDP socket. The Python script was registering
+the coordinates and the timestamps, as well as putting
+the data into a file. At the same time, the script was computing
+average RTT (in milliseconds) by invoking an external bash script.
 
-Our simple script was the following:
+Here is the script I was using to do the job:
 
 \begin{Verbatim}[fontsize=\tiny]
 from threading import Thread
@@ -50,12 +54,12 @@ while True:
 
 \end{Verbatim}
 
-We have collected a long enough trace for the part of the  journey from Tampere to Rovaniemi. We then interpolated 
-the data using the linear interpolator (whenever needed and was possible) and plotted the results on the map. 
-Since the delay between consequtive measurements was 4 seconds we have have interpolated the date using
-the following formula: $t \in \{0.1, 0.2, \ldots 1\}\ s.t.\ x_t = A + (B - A) \cdot t$.
-The source code of the stuff is here~\cite{git}. 
 
-To measure the network performance we have bought sim card from Elisa (local telco). The connection
-on the route from Tampere to Rovaniemi was giving stable 4G.
+
+%We have collected a long enough trace (1.5 hours long) for the part of the  journey from Tampere to Rovaniemi. We then interpolated 
+%the data using the linear interpolator (whenever needed and was possible) and plotted the results on the map. 
+%Since the delay between consequtive measurements was 4 seconds we have have interpolated the date using
+%the following formula: $t \in \{0.1, 0.2, \ldots 1\}\ s.t.\ x_t = A + (B - A) \cdot t$.
+%The source code of the stuff is here~\cite{git}. 
+
 
