@@ -1,27 +1,61 @@
 \section{Data collection methodology}
 \label{section:experiments}
 
-We have used MacBook ability to pick up the GPS coordinates from the iPhone to get the current
-position (latitude and longitude), current timestamp from the date utility and mean value
-from the batch of 4 ICMP ping requests. For that we have used the following script:
+We have used iPhone GPS2IP application to pick up the GPS coordinates from the internal GPS receiver
+to get the current position (latitude and longitude) in GPRMC format. The application was sending the coordinates
+to MacBook laptop over UDP socket. The Python script was registering the coordinates and the timestamps and was logging the 
+data into file. At the same time the script was computing average RTT (in milliseconds) by invoking external bash script.
+
+Our simple script was the following:
 
 \begin{Verbatim}[fontsize=\tiny]
-#!/bin/bash
+from threading import Thread
 
-while True;
-do
-   location=`corelocationcli`
-   time=`date +%s`
-   p=`ping strangebit.io -c 4 | grep round | awk -F "=" '{print $2}' | awk -F "\/" '{print $2}'`
-   echo "$time $location $p" | tee -a m.log
-   sleep 4
-done
+import socket
+
+from time import sleep
+from time import time
+
+UDP_IP = "172.20.10.2"
+UDP_PORT = 10000
+
+fd = open("working.log", "w+")
+
+def gps():
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+	sock.bind((UDP_IP, UDP_PORT))
+	while True:
+		data = sock.recvfrom(1024)
+		fd.write(f"{time()} {data[0].decode('ASCII').strip()}\n")
+		fd.flush()
+		sleep(4)
+
+import subprocess
+
+def icmp():
+	while True:
+		rtt = subprocess.check_output(["bash", "ping-host.sh"])
+		fd.write(f"{time()} {rtt.decode('ASCII').strip()}\n")
+		fd.flush()
+		sleep(4)
+
+t1 = Thread(target=gps, args=(), daemon=True)
+t1.start()
+
+t2 = Thread(target=icmp, args=(), daemon=True)
+t2.start()
+
+while True:
+	sleep(10)
+
 \end{Verbatim}
 
-We have collected a long trace for the entire journey from Helsinki to Tampere. We then interpolated 
-the data using the linear interpolator and plotted the results on the map. 
+We have collected a long enough trace for the part of the  journey from Tampere to Rovaniemi. We then interpolated 
+the data using the linear interpolator (whenever needed and was possible) and plotted the results on the map. 
 Since the delay between consequtive measurements was 4 seconds we have have interpolated the date using
-the following formula: $t \in \{0.1, 0.2, \ldots 1\} x_t = A + (B - A) * t$
+the following formula: $t \in \{0.1, 0.2, \ldots 1\}\ s.t.\ x_t = A + (B - A) \cdot t$.
 The source code of the stuff is here~\cite{git}. 
 
+To measure the network performance we have bought sim card from Elisa (local telco). The connection
+on the route from Tampere to Rovaniemi was giving stable 4G.
 
